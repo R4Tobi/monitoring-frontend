@@ -72,7 +72,7 @@ export const useGetMonitoringData = (hostname: string) => {
         loading.value = true;
         error.value = null;
         try {
-            const response = await $fetch<MonitoringData>(`http://${hostname}:8000/api/clients`);
+            const response = await $fetch<MonitoringData>(`http://${hostname}/api/clients`);
             data.value = response;
         } catch (err) {
             error.value = err;
@@ -82,9 +82,9 @@ export const useGetMonitoringData = (hostname: string) => {
     };
 
     const getClientHistory = async (hostname: string, clientId: string) => {
-        let data;
+        let data: MonitoringData | null = null;
         try {
-            data = await $fetch(`http://${hostname}:8000/api/clients/${clientId}/metrics`);
+            data = await $fetch(`http://${hostname}/api/clients/${clientId}/metrics?limit=2880`);
         } catch (err) {
             error.value = err;
         }

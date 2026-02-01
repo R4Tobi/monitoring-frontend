@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-for="client in data?.clients" :key="client.client_id">
-            <ui5-panel collapsed>
+            <ui5-panel :collapsed="false">
                 <div slot="header" class="header">
                     <ui5-tag :design="client.status.active ? 'Positive' : 'Critical'">{{ client.status.active ? 'Active' : 'Inactive' }}</ui5-tag>
                     <ui5-title level="H1">{{ client.client_id }}</ui5-title>
@@ -78,14 +78,10 @@
                     </ui5-form-group>
                 </ui5-form>
                 <div>
-                    <ui5-chart-container>
-                        <ui5-chart-pie :data="getClientHistory(client.client_id)"></ui5-chart-pie>
-
-                        <canvas
-                            :ref="(el) => setCanvasRef(client.client_id, el as HTMLCanvasElement | null)"
-                            class="ts-canvas"
-                        />
-                    </ui5-chart-container>
+                    <canvas
+                        :ref="(el) => setCanvasRef(client.client_id, el as HTMLCanvasElement | null)"
+                        class="ts-canvas"
+                    />
                 </div>
             </ui5-panel>
         </div>
@@ -118,7 +114,7 @@ type ClientHistory = {
   items: HistoryItem[];
 };
 
-const { data, refresh, getClientHistory } = useGetMonitoringData("");
+const { data, refresh, getClientHistory } = useGetMonitoringData("192.168.2.241:8000");
 refresh();
 
 let intervalHandle: number | undefined;
@@ -182,7 +178,7 @@ async function drawClientChart(clientId: string) {
   const canvas = canvasByClient.get(clientId);
   if (!canvas) return;
 
-  const history = await getClientHistory(clientId) as ClientHistory | undefined;
+  const history = await getClientHistory("192.168.2.241:8000", clientId) as ClientHistory | undefined;
   const items = history?.items ?? [];
   if (items.length < 2) {
     clearCanvas(canvas, "No history");
